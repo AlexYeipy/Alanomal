@@ -1,5 +1,4 @@
-# RickyMortiSala1
-Código Modifica API Rick Y Morty
+# Alanomal
 
 Miembros del grupo:
 Alejandro Gómez Paz,
