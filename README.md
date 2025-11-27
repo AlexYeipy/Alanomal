@@ -20,7 +20,7 @@ Aplicación en C++ que consume la API de Rick and Morty para buscar personajes y
 ## Semana 2: Proyecto RoboCup Soccer Simulation
 
 ### Video Explicativo
-[Enlace al video de YouTube explicando el proyecto RoboCup](https://youtu.be/tu-enlace-aqui)
+[Enlace al video de YouTube explicando el proyecto RoboCup]([https://youtu.be/tu-enlace-aqui](https://www.youtube.com/watch?v=dQw4w9WgXcQ&list=RDdQw4w9WgXcQ&start_radio=1))
 
 ### Descripción del Proyecto
 Implementación de un cliente para RoboCup Soccer Simulation que permite controlar un equipo completo de 11 jugadores, posicionándolos estratégicamente en el campo de fútbol y gestionando su comportamiento durante el partido.
