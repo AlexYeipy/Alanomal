@@ -57,6 +57,90 @@ Player parseInitialMessage(std::string &message, Player &player)
 }
 
 /**
+ * Separa un string en múltiples substrings usando un separador específico
+ *
+ * @param s String original a separar
+ * @param separator Carácter o string usado como separador
+ * @return Vector de strings resultantes de la separación
+ */
+vector<string> separate_string_separator(string &s, string separator)
+{
+    vector<string> v;
+    int pos = 0;
+
+    // Encuentra todas las ocurrencias del separador
+    while ((pos = s.find(separator)) != string::npos)
+    {
+        // Añade el substring antes del separador al vector
+        v.push_back(s.substr(0, pos));
+        // Elimina el substring procesado
+        s.erase(0, pos + separator.length());
+    }
+
+    // Añade el último substring (después del último separador)
+    v.push_back(s);
+    return v;
+}
+
+/**
+ * Separa un string en substrings basándose en paréntesis anidados
+ * Ejemplo: "((hola) (soy) (dani)) (que tal) (estas)" -> {"(hola) (soy) (dani)", "que tal", "estas"}
+ *
+ * @param s String original con estructura de paréntesis
+ * @return Vector de strings separados por niveles de paréntesis
+ */
+vector<string> separate_string(string &s)
+{
+    vector<string> v;
+    int pos = 0;
+    int level = 0;  // Nivel de anidamiento de paréntesis
+    string temp;    // String temporal para acumular contenido
+
+    // Recorre cada carácter del string
+    while (pos < s.size())
+    {
+        // Incrementa nivel al encontrar '('
+        if (s[pos] == '(')
+        {
+            level++;
+        }
+        // Decrementa nivel al encontrar ')'
+        else if (s[pos] == ')')
+        {
+            level--;
+        }
+
+        // Lógica de separación basada en niveles de paréntesis
+        if (s[pos] == '(' && level == 1)
+        {
+            // Inicia nuevo string temporal al encontrar primer '(' del nivel 1
+            temp = "";
+        }
+        else if (s[pos] == ')' && level == 0)
+        {
+            // Finaliza y guarda el string temporal al cerrar paréntesis del nivel 0
+            v.push_back(temp);
+        }
+        else
+        {
+            // Añade carácter al string temporal (excepto paréntesis del nivel 0)
+            temp += s[pos];
+        }
+        pos++;
+    }
+
+    // Verificación de integridad: todos los paréntesis deben estar balanceados
+    if (level != 0)
+    {
+        throw std::runtime_error("Error: Paréntesis desbalanceados - no coinciden aperturas y cierres");
+    }
+    else
+    {
+        return v;
+    }
+}
+
+/**
  * Envía el comando de movimiento inicial para posicionar al jugador en el campo
  * Asigna posiciones específicas basadas en una formación 4-4-2
  *
@@ -100,72 +184,4 @@ void sendInitialMoveMessage(const Player &player,
     udp_socket.sendTo(moveCommand, recipient);
 
     cout << "Comando de movimiento enviado - Posición: " << moveCommand << endl;
-}
-
-vector<string> separate_string_separator(string &s, string separator)
-{
-    vector<string> v;
-    int pos = 0;
-
-    while((pos = s.find(separator)) != string.npos){
-
-        // Añade el substring antes del separador al vector
-        v.push_back(s.substr(0, pos));
-        // Elimina el substring procesado
-        s.erase(0, pos + separator.length());
-    }
-
-    // Añade el último substring (después del último separador)
-    v.push_back(s);
-    return v;
-}
-
-vector<string> separate_string(string &s)
-{
-    vector<string> v;
-    int pos = 0;
-    int level = 0;    // Nivel de anidamiento de paréntesis
-    string temp;      // String temporal para acumular contenido
-
-    // Recorre cada carácter del string
-    while(pos < s.size())
-    {
-        // Incrementa nivel al encontrar '('
-        if (s[pos] == '(')
-        {
-            level++;
-        }
-        // Decrementar nivel al encontrar '('
-        else if (s[pos] == ')')
-        {
-            level--;
-        }
-
-        // Separación con paréntesis
-        if (s[pos] == '(' && level == 1)
-        {
-            // Inicia un string temporal al encontrar primer '(' del nivel 1
-            temp = "";
-        }
-        else if (s[pos] == ')' && level == 0)
-        {
-            v.push_back(temp);
-        }
-        else
-        {
-            // Añade carácter al string temporal
-            temp += s[pos];
-        }
-        pos++;
-    }
-
-    // Verificación de integridad: todos los paréntesis deben estar balanceados
-    if (level != 0)
-    {
-        throw std::runtime_error("Error: Paréntesis desbalanceados - no coinciden aperturas y cierres");
-    }
-    else
-    {
-        return v;
-    }
 }
