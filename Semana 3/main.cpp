@@ -7,6 +7,9 @@ using namespace std;
 #include <thread>
 #include <vector>
 
+#include "funciones.h"
+#include "structs.h"
+
 // Función principal que recibe dos argumentos: nombre del equipo y puerto
 int main(int argc, char *argv[])
 {
