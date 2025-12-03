@@ -42,7 +42,7 @@ Implementación de un cliente para RoboCup Soccer Simulation que permite control
 ## Semana 3: Comportamiento "Patio de colegio" y chutar el balón
 
 ### Video Explicativo
-[Enlace al video de YouTube explicando el proyecto RoboCup]([https://youtu.be/j0YXX2WSgk8](https://www.youtube.com/watch?v=y3qGEccVCtk))
+[Enlace al video de YouTube explicando el proyecto RoboCup]([https://www.youtube.com/watch?v=y3qGEccVCtk)
 
 ### Descripción del Proyecto
 Esta semana hemos conseguido que los jugadors puedan perseguir el balón todos juntos y que, si se encuentran cerca del balón, puedan llegar a chutar. Los jugadores perciben automáticamente el balón, aunque todavía no pueden detectar jugadores que tienen próximos a ellos.
