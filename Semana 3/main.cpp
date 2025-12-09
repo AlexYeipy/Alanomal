@@ -110,21 +110,16 @@ int main(int argc, char *argv[])
             // Comportamiento cuando se detecta la pelota
             if (player.see_ball)
             {
-                // Extracción de coordenadas de la pelota
+                // Extracción de datos de la pelota
                 vector<string> ball_coords = separate_string_separator(see_message[ball_pos], " ");
-                ball.x = ball_coords[1];
-                ball.y = ball_coords[2];
+                ball.distancia = ball_coords[1]; // aquí guardamos la distancia como string
+                ball.angulo = ball_coords[2]; // aquí guardamos el ángulo como string
 
-                cout << "Posición de la pelota - X: " << ball.x << " Y: " << ball.y << endl;
+                // Distancia y angulo reales (en double)
+                double distance = std::stod(ball.distancia);  // distancia al balón
+                double angle = std::stod(ball.angulo);  // ángulo relativo en grados
 
-                // Cálculo de distancia euclidiana a la pelota
-                double distance = sqrt(pow(stod(ball.x), 2) + pow(stod(ball.y), 2));
-                cout << "Distancia a la pelota: " << distance << endl;
-
-                // Cálculo del ángulo hacia la pelota (en grados)
-                double angle = atan2(stod(ball.y), stod(ball.x));
-                angle = angle * 180 / M_PI;
-                cout << "Ángulo hacia la pelota: " << angle << " grados" << endl;
+                cout << "Pelota - distancia: " << distance << " | ángulo: " << angle << " grados" << endl;
 
                 // Lógica de toma de decisiones basada en distancia y ángulo
                 if (distance < 1.5)
@@ -150,7 +145,7 @@ int main(int argc, char *argv[])
                         {
                             division = 5;   // Giro más brusco cuando está lejos
                         }
-                        std::string rotate_command = "(turn " + to_string(angle/division) + ")";
+                        std::string rotate_command = "(turn " + to_string(angle / division) + ")";
                         udp_socket.sendTo(rotate_command, server_udp);
                         cout << "Girando hacia la pelota: " << rotate_command << endl;
                     }
@@ -195,3 +190,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+
