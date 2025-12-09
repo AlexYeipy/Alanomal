@@ -32,10 +32,11 @@ struct Player
 */
 struct Ball
 {
-    std::string x;    // Coordenada X de la posición de la pelota
-    std::string y;    // Coordenada Y de la posición de la pelota
+    std::string distancia;    // Coordenada X de la posición de la pelota
+    std::string angulo;    // Coordenada Y de la posición de la pelota
     std::string vx;   // Componente X de la velocidad de la pelota
     std::string xy;   // Componente Y de la velocidad de la pelota
 };
 
 #endif // ESTRUCTURAS_H
+
