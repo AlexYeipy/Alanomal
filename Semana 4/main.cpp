@@ -99,6 +99,8 @@ int main(int argc, char *argv[])
 
         vector<string> parsed_message = separate_string(received_message_content);
 
+        string mySide = player.side;
+        
         // Solo procesamos mensajes de tipo "see"
         if (parsed_message[0].find("see") <= 5)
         {
@@ -277,6 +279,9 @@ int main(int argc, char *argv[])
                 double distance = stod(ball.distancia);
                 double angle = stod(ball.angulo);
 
+                auto goal = parseGoalOpponent(received_message_content, mySide);
+
+
                 // ============================================
                 // Solo delanteros persiguen SIEMPRE el balón
                 // ============================================
@@ -297,7 +302,7 @@ int main(int argc, char *argv[])
                 // ==> si delantero, o si distancia < umbral → persecución normal
                 if (distance < 1.5)
                 {
-                    std::string kick_command = "(kick 100 0)";
+                    std::string kick_command = "(kick 100 " + to_string(goal.angle) + ")";
                     udp_socket.sendTo(kick_command, server_udp);
                     cout << "Chutando balón." << endl;
                 }
