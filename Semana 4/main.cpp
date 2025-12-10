@@ -154,6 +154,55 @@ int main(int argc, char *argv[])
                 }
             }
 
+            // ========================================
+            //   DETECTAR JUGADORES
+            // ========================================
+            vector<PlayerSeen> teammates;
+            vector<PlayerSeen> opponents;
+
+            for (size_t i = 0; i < see_message.size(); i++) {
+                if (see_message[i].find("(player") != string::npos) {
+                    auto playerOpt = parsePlayer(see_message[i]);
+                    if (playerOpt.has_value()) {
+                        PlayerSeen p = playerOpt.value();
+                        if (p.team == player.team_name) {
+                            teammates.push_back(p);
+                        } else {
+                            opponents.push_back(p);
+                        }
+                    }
+                }
+            }
+
+            // ========================================
+            //   EVITAR RIVALES CERCANOS
+            // ========================================
+            double avoid_distance = 3.0;
+            bool avoid = false;
+            double avoid_angle = 0.0;
+
+            for (const auto& opp : opponents) {
+                if (opp.dist < avoid_distance) {
+                    avoid = true;
+                    avoid_angle = opp.angle;
+                    break;
+                }
+            }
+
+            if (avoid) {
+                // Girar en dirección contraria al rival
+                double turn_angle = avoid_angle + 180; // opuesto
+                if (turn_angle > 180) turn_angle -= 360;
+                string turn_cmd = "(turn " + to_string(turn_angle) + ")";
+                udp_socket.sendTo(turn_cmd, server_udp);
+                cout << "Evitando rival, giro: " << turn_cmd << endl;
+
+                // Dash en la dirección opuesta
+                string dash_cmd = "(dash 80 0)";
+                udp_socket.sendTo(dash_cmd, server_udp);
+                continue; // Saltar al siguiente ciclo
+            }
+
             // =======================================
             //   LÓGICA DEL PORTERO (UNUM == 1)
             // =======================================
@@ -305,6 +354,45 @@ int main(int argc, char *argv[])
 
                 auto goal = parseGoalOpponent(received_message_content, mySide);
 
+                // ========================================
+                //   DECIDIR SI PASAR O CHUTAR
+                // ========================================
+                if (distance < 1.5 && goal.has_value()) {
+                    // Buscar compañero para pasar
+                    optional<PlayerSeen> best_teammate = nullopt;
+                    double best_score = 0.0;
+
+                    for (const auto& mate : teammates) {
+                        // El compañero debe estar más cerca de la portería que yo
+                        // y tener un ángulo favorable hacia la portería
+                        // (esto es una simplificación, se puede mejorar)
+                        double mate_goal_angle = mate.angle - goal->angle;
+                        if (mate_goal_angle > 180) mate_goal_angle -= 360;
+                        if (mate_goal_angle < -180) mate_goal_angle += 360;
+
+                        // Calcular un score basado en la distancia al compañero y su ángulo hacia la portería
+                        double score = (100.0 / mate.dist) * (1.0 / (1.0 + abs(mate_goal_angle)));
+                        if (score > best_score) {
+                            best_score = score;
+                            best_teammate = mate;
+                        }
+                    }
+
+                    // Si encontramos un compañero con un score mínimo, pasar
+                    if (best_teammate.has_value() && best_score > 10.0) {
+                        string pass_cmd = "(kick 50 " + to_string(best_teammate->angle) + ")";
+                        udp_socket.sendTo(pass_cmd, server_udp);
+                        cout << "Pasando al jugador " << best_teammate->unum << " con ángulo " << best_teammate->angle << endl;
+                        continue;
+                    } else {
+                        // Si no, chutar a portería
+                        string kick_cmd = "(kick 100 " + to_string(goal->angle) + ")";
+                        udp_socket.sendTo(kick_cmd, server_udp);
+                        cout << "Chutando a portería." << endl;
+                        continue;
+                    }
+                }
+
 
                 // ============================================
                 // Solo delanteros persiguen SIEMPRE el balón
@@ -393,4 +481,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
