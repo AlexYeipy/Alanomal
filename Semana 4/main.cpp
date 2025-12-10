@@ -302,7 +302,7 @@ int main(int argc, char *argv[])
                 // ==> si delantero, o si distancia < umbral → persecución normal
                 if (distance < 1.5)
                 {
-                    std::string kick_command = "(kick 100 " + to_string(goal.angle) + ")";
+                    std::string kick_command = "(kick 100 " + to_string(goal->angle) + ")";
                     udp_socket.sendTo(kick_command, server_udp);
                     cout << "Chutando balón." << endl;
                 }
