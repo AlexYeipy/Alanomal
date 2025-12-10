@@ -185,3 +185,31 @@ void sendInitialMoveMessage(Player &player,
         cout << "Jugador " << player.unum << " inicializado en: " << moveCommand << endl;
     }
 }
+
+optional<GoalInfo> parseGoalOpponent(const std::string& seeMsg, const std::string& mySide) 
+{
+    std::string targetGoal = (mySide == "l") ? "g r" : "g l";
+
+    // Regex: \( * objetivo * \) y los espacios y numeros
+    std::regex rgx("\\(\\s*" + targetGoal + "\\s*\\)\\s*([-+]?[0-9]*\\.?[0-9]+)\\s+([-+]?[0-9]*\\.?[0-9]+)");
+    std::smatch match;
+
+    if (std::regex_search(seeMsg, match, rgx)) {
+        if (match.size() >= 3) {
+            try {
+                GoalInfo info;
+                info.dist = std::stod(match[1].str());
+                info.angle = std::stod(match[2].str());
+                std::cout << "Porteria rival: Distancia: " << info.dist 
+                          << " | Angulo: " << info.angle << endl;
+                return info;
+            } catch (const std::exception& e) {
+                std::cerr << "Error al convertir distancia/angulo: " << e.what() << " | "
+                          << "token1='" << match[1] << "' token2='" << match[2] << "'\n";
+            }
+        }
+    }
+
+    return std::nullopt;  // Por si no se ve la porteria
+}
+
