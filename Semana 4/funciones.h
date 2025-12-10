@@ -15,5 +15,6 @@ vector<string> separate_string_separator(string & s, string separator);
 
 void sendInitialMoveMessage(Player &player, MinimalSocket::udp::Udp<true> &udp_socket, MinimalSocket::Address const &recipient);
 
-
 optional<GoalInfo> parseGoalOpponent(const std::string& seeMsg, const std::string& mySide);
+
+optional<PlayerSeen> parsePlayer(const string& playerStr);
