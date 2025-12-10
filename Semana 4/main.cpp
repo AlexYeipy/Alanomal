@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     MinimalSocket::Address server_udp = MinimalSocket::Address{"127.0.0.1", other_sender_udp.getPort()};
 
     // Creación de objetos para almacenar estados
-    Player player{team_name, "", "", false, 0, 0, 0};
+    Player player{team_name, "before_kick_off", "", false, 0, 0, 0};
     Ball ball{"0", "0", "0", "0"};
     Goal own_goal{"0","0","init",0};
     Goal opponent_goal{"0","0","init",0};
@@ -105,8 +105,46 @@ int main(int argc, char *argv[])
         std::string received_message_content = received_message->received_message;
 
         vector<string> parsed_message = separate_string(received_message_content);
-
         string mySide = player.side;
+
+        
+        // ======================================
+        // ACTUALIZAR PLAYMODE A PARTIR DE HEAR
+        // ======================================
+        for (const auto &block : parsed_message)
+        {
+            // block será algo tipo: "hear 15 referee before_kick_off"
+            if (block.rfind("hear ", 0) == 0)  // empieza por "hear "
+            {
+                vector<string> hear_parts = separate_string_separator(const_cast<string&>(block), " ");
+
+                if (hear_parts.size() >= 4 && hear_parts[2] == "referee")
+                {
+                    std::string new_mode = hear_parts[3];
+
+                    // Quitar posible ')' final: "before_kick_off)"
+                    if (!new_mode.empty() && new_mode.back() == ')')
+                        new_mode.pop_back();
+
+                    if (new_mode != player.playmode)
+                    {
+                        cout << "[REFEREE] playmode cambia de "
+                             << player.playmode << " a " << new_mode << endl;
+                        player.playmode = new_mode;
+                    }
+                }
+            }
+        }
+
+        // ======================================================
+        //   FASE INICIAL: before_kick_off
+        // ======================================================
+        if (player.playmode == "before_kick_off")
+        {
+            cout << "Partido sin empezar" << endl;
+            continue;
+        }
+    
 
         // Solo procesamos mensajes de tipo "see"
         if (parsed_message[0].find("see") <= 5)
