@@ -161,16 +161,16 @@ void sendInitialMoveMessage(Player &player,
     // Formación 4-4-2 (La misma que tenías)
     vector<Posicion> posiciones = {
         {-50, 0},     // 1: Portero
-        {-35, -20},   // 2: Defensa izquierdo
-        {-35, 0},     // 3: Defensa central izq
-        {-35, 20},    // 4: Defensa central der
-        {-35, -20},   // 5: Defensa derecho
-        {-15, -20},   // 6: Medio derecho
-        {-5, -30},    // 7: Delantero derecho
-        {-15, 20},    // 8: Medio izquierdo
-        {-5, 0},      // 9: Delantero centro
-        {-10, 0},     // 10: Medio centro ofensivo
-        {-5, 30}      // 11: Delantero izquierdo
+        {-35, 20},   // 2: Lateral derecho
+        {-35, -20},     // 3: Lateral izquierdo
+        {-35, 5},    // 4: Defensa central der
+        {-35, -5},   // 5: Defensa central izq
+        {-15, -10},   // 6: Medio derecho
+        {-15, 25},    // 7: Extremo derecho
+        {-15, 10},    // 8: Medio izquierdo
+        {-2, 10},      // 9: Delantero centro uno
+        {-2, -10},     // 10: Delantero centro dos
+        {-15, -25}      // 11: Extremo izquierdo
     };
 
     // Aseguramos que el índice sea válido
@@ -214,4 +214,5 @@ optional<GoalInfo> parseGoalOpponent(const std::string& seeMsg, const std::strin
 
     return std::nullopt;  // Por si no se ve la porteria
 }
+
 
