@@ -188,6 +188,43 @@ void sendInitialMoveMessage(Player &player,
     }
 }
 
+/*
+ * Parsea un mensaje de tipo "hear" para extraer tokens individuales
+ * @param s Mensaje de tipo "hear"
+ * @return Vector de strings con los tokens extraídos
+ */
+
+vector<string> parse_message_hear(const std::string &s)
+{
+    vector<string> tokens;
+    // RegEx que captura secuencias que no sean espacio ni paréntesis
+    std::regex rgx("([^\\s()]+)");
+    auto it = std::sregex_iterator(s.begin(), s.end(), rgx);
+    auto end = std::sregex_iterator();
+    for (; it != end; ++it)
+    {
+        tokens.push_back(it->str());
+    }
+    return tokens;
+}
+
+/**
+ * Envía el comando de saque de centro para posicionar al jugador en el campo
+ *
+ * @param player Objeto Player con información del jugador
+ * @param udp_socket Socket UDP para comunicación
+ * @param recipient Dirección del servidor destino
+ */
+
+void sendInitialKickOffMessage(Player &player,
+                            MinimalSocket::udp::Udp<true> &udp_socket,
+                            MinimalSocket::Address const &recipient)
+{
+    auto moveCommand = "(move " + to_string(player.home_x) + " " + to_string(player.home_y) + ")";
+    udp_socket.sendTo(moveCommand, recipient);
+    cout << "Jugador " << player.unum << " enviado a: " << moveCommand << endl;
+}
+
 optional<GoalInfo> parseGoalOpponent(const std::string& seeMsg, const std::string& mySide)
 {
     std::string targetGoal = (mySide == "l") ? "g r" : "g l";
@@ -214,5 +251,6 @@ optional<GoalInfo> parseGoalOpponent(const std::string& seeMsg, const std::strin
 
     return std::nullopt;  // Por si no se ve la porteria
 }
+
 
 
