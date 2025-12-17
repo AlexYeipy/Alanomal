@@ -6,7 +6,7 @@ read TEAM_NAME
 
 # Define la ruta del ejecutable y el puerto base
 PLAYER_EXECUTABLE="./player"
-BASE_PORT=8111  # Puerto base a partir del cual se asignarán puertos a los jugadores
+BASE_PORT=9000  # Puerto base a partir del cual se asignarán puertos a los jugadores
 
 # Verifica que el ejecutable del jugador exista antes de continuar
 if [ ! -f "$PLAYER_EXECUTABLE" ]; then
